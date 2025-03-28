@@ -145,7 +145,159 @@ def create_domain_info(domain):
     Create comprehensive domain information
     """
     # Validate domain
-    tld_match = re.search(r'\.[a-z]+$', domain.lower())
+    tld_match = re.search(r'\.[a-z]+
+
+# Define color_availability function globally
+def color_availability(val):
+    """
+    Color coding for domain availability
+    """
+    color_map = {
+        'Available': 'background-color: green',
+        'Registered': 'background-color: red',
+        'Unsupported TLD': 'background-color: orange',
+        'Error': 'background-color: gray'
+    }
+    return color_map.get(val, '')
+
+def display_supported_tlds():
+    """
+    Create a sidebar section to display supported TLDs
+    """
+    with st.sidebar.expander("🌐 Supported TLDs"):
+        # Split TLDs into columns for better readability
+        cols = st.columns(4)
+        
+        # Group TLDs by first letter
+        grouped_tlds = {}
+        for tld in DomainTLDs.SUPPORTED_TLDS:
+            first_letter = tld[1].upper()
+            if first_letter not in grouped_tlds:
+                grouped_tlds[first_letter] = []
+            grouped_tlds[first_letter].append(tld)
+        
+        # Sort the letters
+        sorted_letters = sorted(grouped_tlds.keys())
+        
+        # Display TLDs in a readable format
+        for i, letter in enumerate(sorted_letters):
+            with cols[i % 4]:
+                st.markdown(f"**{letter}**")
+                tld_list = sorted(grouped_tlds[letter])
+                st.markdown("\n".join(tld_list))
+
+def main():
+    st.set_page_config(
+        page_title="Domain Availability Checker",
+        page_icon="🌐",
+        layout="wide"
+    )
+    
+    st.title('🔍 Domain Availability Checker')
+    
+    # Display supported TLDs in sidebar
+    display_supported_tlds()
+    
+    # File upload section
+    st.header('📂 Upload Domain File')
+    uploaded_file = st.file_uploader('Select a .txt file with domains', 
+                                     type=['txt'], 
+                                     help='Upload a text file with one domain per line')
+    
+    # Process domains from uploaded file
+    if uploaded_file is not None:
+        # Read file contents
+        file_contents = uploaded_file.getvalue().decode('utf-8')
+        domains = [domain.strip() for domain in file_contents.split('\n') if domain.strip()]
+        
+        if domains:
+            # Check availability of each domain
+            results = []
+            progress_bar = st.progress(0)
+            for i, domain in enumerate(domains):
+                domain_info = create_domain_info(domain)
+                results.append(domain_info)
+                # Update progress bar
+                progress_bar.progress((i + 1) / len(domains))
+            
+            # Create DataFrame to display results
+            df = pd.DataFrame(results)
+            
+            # Use st.markdown to render HTML links
+            st.markdown(
+                df.style
+                .applymap(color_availability, subset=['Availability'])
+                .to_html(escape=False),
+                unsafe_allow_html=True
+            )
+            
+            # Option to download results
+            csv = df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download CSV Results",
+                data=csv,
+                file_name='domain_results.csv',
+                mime='text/csv'
+            )
+        else:
+            st.warning('No domains found in the file')
+    
+    # Manual domain entry section
+    st.header('✍️ Check Domains Manually')
+    manual_domains = st.text_area('Enter domains (one per line)')
+    
+    if st.button('Check Manual Domains'):
+        if manual_domains:
+            domains = [domain.strip() for domain in manual_domains.split('\n') if domain.strip()]
+            
+            results = []
+            progress_bar = st.progress(0)
+            for i, domain in enumerate(domains):
+                domain_info = create_domain_info(domain)
+                results.append(domain_info)
+                # Update progress bar
+                progress_bar.progress((i + 1) / len(domains))
+            
+            # Create and display DataFrame
+            df = pd.DataFrame(results)
+            
+            # Use st.markdown to render HTML links
+            st.markdown(
+                df.style
+                .applymap(color_availability, subset=['Availability'])
+                .to_html(escape=False),
+                unsafe_allow_html=True
+            )
+            
+            # Option to download results
+            csv = df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download CSV Results",
+                data=csv,
+                file_name='domain_results.csv',
+                mime='text/csv'
+            )
+
+    # Additional information
+    st.sidebar.info("""
+    ### 🌐 Domain Availability Checker
+    - Upload a .txt file with domains
+    - Check their availability
+    - Get purchase links from multiple registrars
+    - View estimated domain prices
+    - Download results in CSV
+    
+    **Note:** 
+    - Verification depends on WHOIS server response
+    - Prices are estimated approximations
+    """)
+
+if __name__ == '__main__':
+    main()
+
+# Requirements:
+# pip install streamlit python-whois pandas
+, domain.lower())
     if not tld_match or tld_match.group(0) not in DomainTLDs.SUPPORTED_TLDS:
         return {
             'Domain': domain,
@@ -161,27 +313,18 @@ def create_domain_info(domain):
         return {
             'Domain': domain,
             'Availability': 'Error',
-            'GoDaddy Link': '-',
-            'Gandi Link': '-',
-            'Estimated Price': '-'
-        }
-    
-    if availability:
-        return {
-            'Domain': domain,
-            'Availability': 'Available',
-            'GoDaddy Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "GoDaddy")}" target="_blank">Buy on GoDaddy</a>',
-            'Gandi Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "Gandi")}" target="_blank">Buy on Gandi</a>',
+            'GoDaddy Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "GoDaddy")}" target="_blank">Check on GoDaddy</a>',
+            'Gandi Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "Gandi")}" target="_blank">Check on Gandi</a>',
             'Estimated Price': DomainPriceEstimator.estimate_price(domain)
         }
-    else:
-        return {
-            'Domain': domain,
-            'Availability': 'Registered',
-            'GoDaddy Link': '-',
-            'Gandi Link': '-',
-            'Estimated Price': '-'
-        }
+    
+    return {
+        'Domain': domain,
+        'Availability': 'Available' if availability else 'Registered',
+        'GoDaddy Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "GoDaddy")}" target="_blank">{"Buy" if availability else "Check"} on GoDaddy</a>',
+        'Gandi Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "Gandi")}" target="_blank">{"Buy" if availability else "Check"} on Gandi</a>',
+        'Estimated Price': DomainPriceEstimator.estimate_price(domain)
+    }
 
 # Define color_availability function globally
 def color_availability(val):
