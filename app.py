@@ -2,7 +2,6 @@ import streamlit as st
 import whois
 import pandas as pd
 import urllib.parse
-import requests
 import re
 
 class DomainRegistrars:
@@ -118,6 +117,13 @@ def create_domain_info(domain):
             'Estimated Price': '-'
         }
 
+# Define color_availability function globally
+def color_availability(val):
+    """
+    Color coding for domain availability
+    """
+    return 'background-color: green' if val == 'Available' else 'background-color: red'
+
 def main():
     st.set_page_config(
         page_title="Domain Availability Checker",
@@ -151,10 +157,6 @@ def main():
             
             # Create DataFrame to display results
             df = pd.DataFrame(results)
-            
-            # Color results
-            def color_availability(val):
-                return 'background-color: green' if val == 'Available' else 'background-color: red'
             
             # Use st.markdown to render HTML links
             st.markdown(
