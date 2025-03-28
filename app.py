@@ -44,22 +44,16 @@ class DomainRegistrars:
     """
     REGISTRARS = {
         'default': {
-            'GoDaddy': "https://www.godaddy.com/domains/search/domain/",
-            'Gandi': "https://www.gandi.net/en/domain/search?domain="
+            'GoDaddy': "https://www.godaddy.com/es-es/domainsearch/find?domainToCheck=",
+            'Gandi': "https://shop.gandi.net/en/domain/suggest?search="
         },
         'tld_specific': {
-            '.com': {
-                'GoDaddy': "https://www.godaddy.com/domains/search/domain/",
-                'Gandi': "https://www.gandi.net/en/domain/search?domain="
-            },
-            '.org': {
-                'GoDaddy': "https://www.godaddy.com/domains/search/domain/",
-                'Gandi': "https://www.gandi.net/en/domain/create/org"
-            },
-            '.net': {
-                'GoDaddy': "https://www.godaddy.com/domains/search/domain/",
-                'Gandi': "https://www.gandi.net/en/domain/create/net"
-            }
+            # You can add specific links for TLDs if needed
+            # Example:
+            # '.com.br': {
+            #     'GoDaddy': "https://www.godaddy.com/es-es/domainsearch/find?domainToCheck=",
+            #     'Gandi': "https://shop.gandi.net/en/domain/suggest?search="
+            # }
         }
     }
 
@@ -111,6 +105,7 @@ class DomainPriceEstimator:
             '.fr': {'min': 5, 'max': 15},
             '.jp': {'min': 10, 'max': 30},
             '.au': {'min': 10, 'max': 25},
+            '.br': {'min': 10, 'max': 25},
             
             # Default fallback
             'default': {'min': 10, 'max': 20}
