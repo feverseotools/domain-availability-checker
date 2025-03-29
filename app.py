@@ -72,47 +72,6 @@ class DomainRegistrars:
         encoded_domain = urllib.parse.quote(domain)
         return f"{link}{encoded_domain}"
 
-class DomainPriceEstimator:
-    """
-    Class to estimate domain prices
-    """
-    @staticmethod
-    def estimate_price(domain):
-        """
-        Estimate domain price based on TLD
-        """
-        # Basic price mapping
-        tld_prices = {
-            # Generic TLDs
-            '.com': {'min': 10, 'max': 20},
-            '.org': {'min': 8, 'max': 15},
-            '.net': {'min': 9, 'max': 18},
-            '.io': {'min': 30, 'max': 50},
-            '.co': {'min': 20, 'max': 30},
-            
-            # Country Code TLDs (prices can vary widely)
-            '.uk': {'min': 5, 'max': 15},
-            '.us': {'min': 5, 'max': 15},
-            '.ca': {'min': 10, 'max': 20},
-            '.de': {'min': 5, 'max': 15},
-            '.fr': {'min': 5, 'max': 15},
-            '.jp': {'min': 10, 'max': 30},
-            '.au': {'min': 10, 'max': 25},
-            '.br': {'min': 10, 'max': 25},
-            '.es': {'min': 8, 'max': 18},
-            
-            # Default fallback
-            'default': {'min': 10, 'max': 20}
-        }
-        
-        # Extract TLD
-        tld_match = re.search(r'\.[a-z]+$', domain.lower())
-        tld = tld_match.group(0) if tld_match else '.com'
-        
-        # Get price range
-        price_range = tld_prices.get(tld, tld_prices['default'])
-        return f"${price_range['min']} - ${price_range['max']}/year"
-
 class DomainAvailabilityChecker:
     """
     Advanced domain availability checking
@@ -201,7 +160,6 @@ def create_domain_info(domain):
             'Availability': 'Unsupported TLD',
             'GoDaddy Link': '-',
             'Gandi Link': '-',
-            'Estimated Price': '-'
         }
     
     availability = DomainAvailabilityChecker.check_domain_availability(domain)
@@ -212,7 +170,6 @@ def create_domain_info(domain):
             'Availability': 'Uncertain',
             'GoDaddy Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "GoDaddy")}" target="_blank">Check on GoDaddy</a>',
             'Gandi Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "Gandi")}" target="_blank">Check on Gandi</a>',
-            'Estimated Price': DomainPriceEstimator.estimate_price(domain)
         }
     
     return {
@@ -220,7 +177,6 @@ def create_domain_info(domain):
         'Availability': 'Available' if availability else 'Registered',
         'GoDaddy Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "GoDaddy")}" target="_blank">{"Buy" if availability else "Check"} on GoDaddy</a>',
         'Gandi Link': f'<a href="{DomainRegistrars.get_purchase_link(domain, "Gandi")}" target="_blank">{"Buy" if availability else "Check"} on Gandi</a>',
-        'Estimated Price': DomainPriceEstimator.estimate_price(domain)
     }
 
 def color_availability(val):
@@ -359,12 +315,10 @@ def main():
     - Upload a .txt file with domains
     - Check their availability
     - Get purchase links from multiple registrars
-    - View estimated domain prices
     - Download results in CSV
     
     **Note:** 
     - Verification depends on WHOIS server response
-    - Prices are estimated approximations
     """)
 
 if __name__ == '__main__':
