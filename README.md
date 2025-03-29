@@ -1,38 +1,52 @@
 # 🌐 Domain Availability Checker
 
-## Description
-Web tool to quickly and easily check domain availability.
+## Overview
+A comprehensive Streamlit web application to check domain availability across multiple TLDs, providing purchase links and price estimates.
 
 ## Features
-- 📂 Upload .txt file with domains
-- 🔍 Availability verification
-- 📥 Download results in CSV
+- ✅ Check domain availability for 60+ TLDs
+- 🔍 Multiple verification methods
+- 💰 Estimated domain pricing
+- 📊 Multiple domain checking
+- 📥 CSV export of results
 
-## How to Use
-1. Prepare a .txt file with domains (one domain per line)
-2. Upload the file to the application
-3. View availability results
-4. Download report in CSV
+## Requirements
+- Python 3.7+
+- Libraries in `requirements.txt`
 
-## Local Installation
+## Installation
+1. Clone the repository
+2. Install requirements:
 ```bash
-pip install streamlit python-whois pandas
+pip install -r requirements.txt
+```
+
+## Usage
+Run the Streamlit app:
+```bash
 streamlit run app.py
 ```
 
-## Domain File Example
-```
-google.com
-example.org
-available.net
-```
+## How It Works
+- Upload a .txt file with domains
+- Manually enter domains
+- Get availability status
+- View purchase links for GoDaddy and Gandi
+- Download results in CSV
 
-## Deployment
-Compatible with Streamlit Cloud and GitHub Codespaces
+## Supported TLDs
+Includes country code and generic top-level domains.
 
 ## Limitations
-- Verification depends on WHOIS server response
-- Some domains may require more time to verify
+- Availability checks depend on network connectivity
+- Prices are estimated approximations
+
+## Contributing
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
-[Specify License]
+[Specify your license here]
