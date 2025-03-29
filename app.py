@@ -270,17 +270,6 @@ def main():
     
     st.title('🔍 Domain Availability Checker')
     
-    # GitHub Repository Verification
-    github_repo = st.text_input(
-        "🔗 GitHub Repository URL", 
-        placeholder="https://github.com/username/repository",
-        help="Please provide the GitHub repository URL for this project."
-    )
-    
-    if not github_repo or not github_repo.startswith('https://github.com/'):
-        st.warning("⚠️ Please enter a valid GitHub repository URL")
-        st.stop()
-    
     # Display supported TLDs in sidebar
     display_supported_tlds()
     
